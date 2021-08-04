@@ -10,50 +10,36 @@ namespace ConsoleApp1
     class Program
     {
         class Person {
-            public Person(string name)
+            public delegate void OnNameChanged(string oldName, string newName);
+            public Person(string name, int age)
             {
                 Name = name;
+                Age = age;
             }
-            public string Name {get;set;}
-            public string Test(string str) {
-                WriteLine("Test\n");
-                return "return from Test";
+
+            public OnNameChanged onNameChanged = null;
+            private string _name;
+            public string Name {
+                get => _name;
+                set
+                {
+                    string oldName = _name;
+                    _name = value;
+                    onNameChanged?.Invoke(oldName, value);
+                }
             }
+            public int Age {get;set;}
         }
-        public delegate string GetResult(string arg1);
 
         static void Main(string[] args)
         {
             Person person;
-            person = new Person("Alex");
-            
-            GetResult functions = null;
-
-
-            functions += (string a) =>
-            {
-                WriteLine("Лямбда\n");
-                return "return from Лямбда";
+            person = new Person("Alex", 33);
+            person.Name = "Butch";
+            person.onNameChanged += (string oldName, string newName) => {
+                WriteLine($"Имя изменилось: {oldName} => {newName}");
             };
-            //functions += person.Test;
-            //functions += person.Test;
-            functions += person.Test;
-            functions += person.Test;
-            functions += person.Test;
-            functions += person.Test;
-            //functions -= person.Test;
-            foreach (var func in functions.GetInvocationList()) { 
-                WriteLine((func as GetResult)?.Invoke("Вызов"));
-            }
-            //WriteLine(functions?.Invoke("Вызов"));
-            //WriteLine(functions("Вызов"));
-            //if (functions != null)
-            //{
-            //    WriteLine(functions("Вызов"));
-            //}
-            //else {
-            //    WriteLine("null");
-            //}
+            person.Name = "John";
 
             ReadKey();
         }
