@@ -10,15 +10,16 @@ namespace ConsoleApp1
     class Program
     {
         class Person {
-            public delegate void OnNameChanged(string oldName, string newName);
+            public delegate void OnPropertyChanged<T>(T oldValue, T newValue);
             public Person(string name, int age)
             {
                 Name = name;
                 Age = age;
             }
-
-            public OnNameChanged onNameChanged = null;
+            public event OnPropertyChanged<string> onNameChanged = null;
+            public event OnPropertyChanged<int> onAgeChanged = null;
             private string _name;
+            private int _age;
             public string Name {
                 get => _name;
                 set
@@ -28,9 +29,17 @@ namespace ConsoleApp1
                     onNameChanged?.Invoke(oldName, value);
                 }
             }
-            public int Age {get;set;}
+            public int Age
+            {
+                get => _age;
+                set
+                {
+                    int oldAge = _age;
+                    _age = value;
+                    onAgeChanged?.Invoke(oldAge, value);
+                }
+            }
         }
-
         static void Main(string[] args)
         {
             Person person;
@@ -39,10 +48,10 @@ namespace ConsoleApp1
             person.onNameChanged += (string oldName, string newName) => {
                 WriteLine($"Имя изменилось: {oldName} => {newName}");
             };
+
             person.Name = "John";
 
             ReadKey();
         }
-
     }
 }
