@@ -14,7 +14,6 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
 
-
             var Example = new StreamExample();
             Example.Run();
 

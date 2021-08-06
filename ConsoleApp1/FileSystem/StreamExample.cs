@@ -14,21 +14,18 @@ namespace ConsoleApp1.FileSystem
         {
             using (Stream stream = new FileStream("./test.txt", FileMode.Truncate))
             {
-                string Test = "вапрвапвап"; // windows-1251
-                // utf-8
-                byte[] Bytes = Encoding.Unicode.GetBytes(Test);
-                //byte[] BadBytes = { 250 };
-                //stream.Write(BadBytes, 0, 1);
-                stream.Write(Bytes, 0, Bytes.Length);
+                using (StreamWriter sw = new StreamWriter(stream)) { 
+                    string Test = "вапрвапвап";
+                    sw.Write(Test);
+                }
             }
             using (Stream stream = new FileStream("./test.txt", FileMode.Open))
             {
-                long len = stream.Length;
-                byte[] Bytes = new byte[len];
-                int readed = stream.Read(Bytes, 0, Bytes.Length);
-
-                //WriteLine(Encoding.Unicode.GetString(Bytes));
-                WriteLine(Encoding.Unicode.GetString(Bytes, 0, readed));
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string Test = sr.ReadLine();
+                    WriteLine(Test);
+                }
             }
         }
     }
